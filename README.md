@@ -137,30 +137,8 @@ Implementation:
 --- 
 
 ### 📦 Folder Structure (Planned)
-chess_engine/
-│
-├── core/
-│   ├── board.py
-│   ├── piece.py
-│   ├── move.py
-│   ├── game_state.py
-│
-├── engine/
-│   ├── bot.py
-│   ├── evaluation.py
-│   ├── search.py
-│
-├── ui/
-│   ├── cli.py
-│   └── gui.py  (optional)
-│
-├── tests/
-│   ├── test_pieces.py
-│   ├── test_rules.py
-│   └── test_bot.py
-│
-├── main.py
-└── README.md
+
+chess_engine/ │ ├── core/ │ ├── board.py │ ├── piece.py │ ├── move.py │ ├── game_state.py │ ├── engine/ │ ├── bot.py │ ├── evaluation.py │ ├── search.py │ ├── ui/ │ ├── cli.py │ └── gui.py (optional) │ ├── tests/ │ ├── test_pieces.py │ ├── test_rules.py │ └── test_bot.py │ ├── main.py └── README.md
 
 ---
 
