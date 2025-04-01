@@ -1,0 +1,126 @@
+# ♟️ Deep Dive Python Chess Engine + Bot
+
+Build a complete, FIDE-legal chess engine and bot in Python from scratch — no external libraries for game logic. This project is a full educational and engineering deep dive into chess programming and AI.
+
+---
+
+## 🚀 Project Overview
+
+Implementation:
+- A full chess rules engine (pieces, board, moves, special rules)
+- Terminal-based gameplay
+- A custom-built chess bot using Minimax + Alpha-Beta pruning
+- An optional GUI (Pygame, Tkinter, etc.)
+- Clean architecture, full test coverage, and deep rule enforcement
+
+---
+
+## 🛠️ Tech Stack
+
+- Language: **Python**
+- Interface: **Terminal (CLI)** → Optional: GUI (Pygame/Tkinter)
+- Libraries: None for logic (built from scratch), optional for UI
+- Bot: Custom **Minimax** with **alpha-beta pruning**
+
+---
+
+## 📋 Roadmap
+
+### ✅ PHASE 1 — Board Representation & Core Structures
+- [ ] Define board structure (`8x8` or 1D list of 64 squares)
+- [ ] Create enums/constants for pieces and colors
+- [ ] Implement `Piece` class with type, color, has_moved
+- [ ] Implement `Move` class to represent all move metadata
+- [ ] Initialize and print the starting board
+
+---
+
+### ♟️ PHASE 2 — Piece Movement & Move Generation
+- [ ] Implement movement rules for:
+  - [ ] Pawn (incl. captures, double push)
+  - [ ] Knight
+  - [ ] Bishop
+  - [ ] Rook
+  - [ ] Queen
+  - [ ] King (incl. castling)
+- [ ] Generate pseudo-legal moves
+- [ ] Implement legal move filtering:
+  - [ ] King safety
+  - [ ] Pinned pieces
+  - [ ] Discovered checks
+
+---
+
+### ⚖️ PHASE 3 — Rule Enforcement
+- [ ] En passant (timing, legality)
+- [ ] Castling (rook/king unmoved, check rules)
+- [ ] Pawn promotion (default to queen, later user choice)
+- [ ] Threefold repetition detection
+- [ ] 50-move rule
+- [ ] Check/checkmate/stalemate detection
+
+---
+
+### 🎮 PHASE 4 — Game Management & CLI
+- [ ] Turn system
+- [ ] Input parsing (e.g., `e2e4`)
+- [ ] Output clean board state
+- [ ] Move validation
+- [ ] Undo/redo move stack
+- [ ] Move history
+- [ ] Save/load games (optional PGN format)
+
+---
+
+### 🧠 PHASE 5 — Evaluation Function
+- [ ] Material score
+- [ ] Piece-square tables
+- [ ] Pawn structure (doubled, isolated, passed)
+- [ ] King safety
+- [ ] Mobility
+- [ ] Normalize score per side to move
+
+---
+
+### 🤖 PHASE 6 — Bot Logic
+- [ ] Implement Minimax search (recursive)
+- [ ] Add Alpha-Beta pruning
+- [ ] Add iterative deepening
+- [ ] Add quiescence search
+- [ ] Add move ordering (captures first, killer moves)
+- [ ] Time-based or depth-based limits
+
+---
+
+### ⚙️ PHASE 7 — Optimization & Testing
+- [ ] Modularize code (board, game, logic, bot)
+- [ ] Profile for performance bottlenecks
+- [ ] Add unit tests for:
+  - [ ] Movement rules
+  - [ ] Special cases
+  - [ ] Game result detection
+- [ ] Add logging/debug mode
+- [ ] Document functions and architecture
+- [ ] Add type hints
+
+---
+
+### 🎨 PHASE 8 — Optional GUI
+- [ ] Choose GUI library: Pygame / Tkinter / PyQt
+- [ ] Render board and pieces
+- [ ] Handle drag-and-drop or click input
+- [ ] Show check/mate/stalemate
+- [ ] Play against bot in GUI
+
+---
+
+## 🧮 Evaluation Formula (Example)
+
+```python
+def evaluate(board):
+    return (
+        material_score(board) +
+        position_bonus(board) +
+        king_safety(board) +
+        mobility_score(board)
+    )
