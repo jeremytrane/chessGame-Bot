@@ -164,6 +164,8 @@ chess_engine/
 ├── main.py
 └── README.md
 
+<pre> ``` 📦 Folder Structure (Planned) chess_engine/ │ ├── core/ │ ├── board.py │ ├── piece.py │ ├── move.py │ ├── game_state.py ``` </pre>
+
 ---
 
 ## 🧮 Evaluation Formula (Example)
