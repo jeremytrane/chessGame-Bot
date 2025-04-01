@@ -142,10 +142,12 @@ Implementation:
   <summary>📁 chess_engine</summary>
   <details>
     <summary>📄 core</summary>
-    board.py<br>
-    piece.py<br>
-    move.py<br>
-    game_state.py
+    <ul>
+      <li>board.py</li>
+      <li>piece.py</li>
+      <li>move.py</li>
+      <li>game_state.py</li>
+    </ul>
   </details>
 
   <details>
