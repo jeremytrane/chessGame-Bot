@@ -114,6 +114,28 @@ Implementation:
 
 ---
 
+### 🧠 Core Concepts to Learn Along the Way
+- Bitboards vs arrays (you'll use arrays here)
+- Chess engine search trees
+- Alpha-beta pruning
+- Evaluation heuristics
+- Game state management
+- Clean architecture and separation of concerns
+
+---
+
+## 📅 Project Timeline (Flexible Estimate)
+
+| Phase         | Estimated Duration |
+|---------------|--------------------|
+| Phases 1–2    | 1–2 weeks          |
+| Phases 3–4    | 1 week             |
+| Phases 5–6    | 2–3 weeks          |
+| Phase 7       | 1 week             |
+| Phase 8 (GUI) | 1–2 weeks          |
+
+--- 
+
 ## 🧮 Evaluation Formula (Example)
 
 ```python
