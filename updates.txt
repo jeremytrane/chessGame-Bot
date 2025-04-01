@@ -1,0 +1,8 @@
+Optional Later Additions
+pgn.py: to export or import PGN format games
+
+timer.py: for time controls
+
+logger.py: custom debug/verbose output
+
+utils.py: for helpers
