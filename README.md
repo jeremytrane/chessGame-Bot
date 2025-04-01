@@ -144,36 +144,36 @@ Implementation:
   <details>
     <summary>📁 core</summary>
     <ul>
-      <li>board.py</li>
-      <li>piece.py</li>
-      <li>move.py</li>
-      <li>game_state.py</li>
+      <li>📄 board.py</li>
+      <li>📄 piece.py</li>
+      <li>📄 move.py</li>
+      <li>📄 game_state.py</li>
     </ul>
   </details>
 
   <details>
     <summary>📁 engine</summary>
     <ul>
-      <li>bot.py</li>
-      <li>evaluation.py</li>
-      <li>search.py</li>
+      <li>📄 bot.py</li>
+      <li>📄 evaluation.py</li>
+      <li>📄 search.py</li>
     </ul>
   </details>
 
   <details>
     <summary>📁 ui</summary>
     <ul>
-      <li>cli.py</li>
-      <li>gui.py</li>
+      <li>📄 cli.py</li>
+      <li>📄 gui.py</li>
     </ul>
   </details>
 
   <details>
     <summary>📁 tests</summary>
     <ul>
-      <li>test_pieces.py</li>
-      <li>test_rules.py</li>
-      <li>test_bot.py</li>
+      <li>📄 test_pieces.py</li>
+      <li>📄 test_rules.py</li>
+      <li>📄 test_bot.py</li>
     </ul>
   </details>
 
