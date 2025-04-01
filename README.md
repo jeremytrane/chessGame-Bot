@@ -140,8 +140,9 @@ Implementation:
 
 <details>
   <summary>📁 chess_engine</summary>
+
   <details>
-    <summary>📄 core</summary>
+    <summary>📁 core</summary>
     <ul>
       <li>board.py</li>
       <li>piece.py</li>
@@ -151,23 +152,29 @@ Implementation:
   </details>
 
   <details>
-    <summary>📄 engine</summary>
-    - bot.py
-    - evaluation.py
-    - search.py
+    <summary>📁 engine</summary>
+    <ul>
+      <li>bot.py</li>
+      <li>evaluation.py</li>
+      <li>search.py</li>
+    </ul>
   </details>
 
   <details>
-    <summary>📄 ui</summary>
-    - cli.py
-    - gui.py
+    <summary>📁 ui</summary>
+    <ul>
+      <li>cli.py</li>
+      <li>gui.py</li>
+    </ul>
   </details>
 
   <details>
-    <summary>📄 tests</summary>
-    - test_pieces.py
-    - test_rules.py
-    - test_bot.py
+    <summary>📁 tests</summary>
+    <ul>
+      <li>test_pieces.py</li>
+      <li>test_rules.py</li>
+      <li>test_bot.py</li>
+    </ul>
   </details>
 
   <details>
@@ -177,6 +184,7 @@ Implementation:
   <details>
     <summary>📄 README.md</summary>
   </details>
+
 </details>
 
 ---
