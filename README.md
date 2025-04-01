@@ -177,13 +177,10 @@ Implementation:
     </ul>
   </details>
 
-  <details>
-    <summary>📄 main.py</summary>
-  </details>
-
-  <details>
-    <summary>📄 README.md</summary>
-  </details>
+  <ul>
+    <li>📄 main.py</li>
+    <li>📄 README.md</li>
+  </ul>
 
 </details>
 
