@@ -12,6 +12,13 @@ def main():
 
         move_str = get_user_move_input()
 
+        if move_str == "undo":
+            if game.undo_last_move():
+                show_message("Undid last move.")
+            else:
+                show_message("No move to undo.")
+            continue
+
         if not game.is_valid_input_format(move_str):
             show_message("Invalid format. Use e.g. 'e2e4'")
             continue

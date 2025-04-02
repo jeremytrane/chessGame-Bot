@@ -1,4 +1,4 @@
-from .piece import Piece, PieceType, Color
+from core.piece import Piece, PieceType, Color
 
 class Board:
     def __init__(self):
@@ -30,3 +30,13 @@ class Board:
         self.grid[to[0]][to[1]] = piece
         self.grid[fr[0]][fr[1]] = None
         piece.has_moved = True
+
+    def undo_move(self, move):
+        from_row, from_col = move.from_pos
+        to_row, to_col = move.to_pos
+
+        # Move piece back
+        self.grid[from_row][from_col] = move.piece
+        self.grid[to_row][to_col] = move.captured  # Put captured piece back (can be None)
+
+        move.piece.has_moved = False  # Simple undo — reset flag (can be improved for full accuracy)

@@ -10,7 +10,12 @@ class GameState:
 
     def is_game_over(self) -> bool:
         return False  # Full implementation in later phases
-
+    
+    def print_move_history(self):
+        print("Move history:")
+        for i, move in enumerate(self.move_history):
+            print(f"{i + 1}. {move}")
+    
     def is_valid_input_format(self, move_str: str) -> bool:
         return len(move_str) == 4 and all(c.isalnum() for c in move_str)
 
@@ -47,3 +52,12 @@ class GameState:
         col = ord(notation[0]) - ord('a')
         row = 8 - int(notation[1])
         return (row, col)
+    
+    def undo_last_move(self):
+        if not self.move_history:
+            return False
+
+        last_move = self.move_history.pop()
+        self.board.undo_move(last_move)
+        self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
+        return True
