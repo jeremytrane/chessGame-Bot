@@ -27,11 +27,11 @@ Implementation:
 ## 📋 Roadmap
 
 ### ✅ PHASE 1 — Board Representation & Core Structures
-- [ ] Define board structure (`8x8` or 1D list of 64 squares)
-- [ ] Create enums/constants for pieces and colors
-- [ ] Implement `Piece` class with type, color, has_moved
-- [ ] Implement `Move` class to represent all move metadata
-- [ ] Initialize and print the starting board
+- [x] Define board structure (`8x8` or 1D list of 64 squares)
+- [x] Create enums/constants for pieces and colors
+- [x] Implement `Piece` class with type, color, has_moved
+- [x] Implement `Move` class to represent all move metadata
+- [x] Initialize and print the starting board
 
 ---
 
