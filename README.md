@@ -36,18 +36,18 @@ Implementation:
 ---
 
 ### ♟️ PHASE 2 — Piece Movement & Move Generation
-- [ ] Implement movement rules for:
-  - [ ] Pawn (incl. captures, double push)
-  - [ ] Knight
-  - [ ] Bishop
-  - [ ] Rook
-  - [ ] Queen
-  - [ ] King (incl. castling)
-- [ ] Generate pseudo-legal moves
-- [ ] Implement legal move filtering:
-  - [ ] King safety
-  - [ ] Pinned pieces
-  - [ ] Discovered checks
+- [x] Implement movement rules for:
+  - [x] Pawn (incl. captures, double push)
+  - [x] Knight
+  - [x] Bishop
+  - [x] Rook
+  - [x] Queen
+  - [x] King (incl. castling)
+- [x] Generate pseudo-legal moves
+- [x] Implement legal move filtering:
+  - [x] King safety
+  - [x] Pinned pieces
+  - [x] Discovered checks
 
 ---
 
