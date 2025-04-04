@@ -30,13 +30,21 @@ class Board:
         fr, to = move.from_pos, move.to_pos
         piece = move.piece
 
-        # Detect en passant capture (pawn captures empty square)
-        if piece.type == PieceType.PAWN and move.captured and self.grid[to[0]][to[1]] is None:
-            # Remove the captured pawn behind the target square
-            self.grid[move.captured_pos[0]][move.captured_pos[1]] = None
-
         self.grid[to[0]][to[1]] = piece
         self.grid[fr[0]][fr[1]] = None
+
+        # 🏰 Handle castling rook movement
+        if piece.type == PieceType.KING and abs(to[1] - fr[1]) == 2:
+            row = fr[0]
+            if to[1] == 6:  # Kingside
+                self.grid[row][5] = self.grid[row][7]
+                self.grid[row][7] = None
+                self.grid[row][5].has_moved = True
+            elif to[1] == 2:  # Queenside
+                self.grid[row][3] = self.grid[row][0]
+                self.grid[row][0] = None
+                self.grid[row][3].has_moved = True
+
         piece.has_moved = True
 
     def undo_move(self, move: Move):
@@ -161,7 +169,16 @@ class Board:
             if 0 <= new_row < 8 and 0 <= new_col < 8:
                 target = self.grid[new_row][new_col]
                 if target is None or target.color != piece.color:
-                    moves.append(Move((row, col), (new_row, new_col), piece, captured=target))
+                    moves.append(Move(pos, (new_row, new_col), piece, captured=target))
+
+        # 🏰 Castling (simplified - assumes legality checked via filtering)
+        if not piece.has_moved and (row, col) == (7, 4) or (row, col) == (0, 4):
+            # Kingside
+            if self._can_castle_kingside(piece.color):
+                moves.append(Move(pos, (row, 6), piece))  # e1 → g1 or e8 → g8
+            # Queenside
+            if self._can_castle_queenside(piece.color):
+                moves.append(Move(pos, (row, 2), piece))  # e1 → c1 or e8 → c8
         return moves
 
     def find_king(self, color: Color) -> tuple[int, int] | None:
@@ -171,3 +188,31 @@ class Board:
                 if piece and piece.type == PieceType.KING and piece.color == color:
                     return (row, col)
         return None
+
+    def _can_castle_kingside(self, color: Color) -> bool:
+        row = 7 if color == Color.WHITE else 0
+        king = self.grid[row][4]
+        rook = self.grid[row][7]
+
+        if not rook or rook.type != PieceType.ROOK or rook.color != color or rook.has_moved:
+            return False
+        if self.grid[row][5] or self.grid[row][6]:  # f1/g1 or f8/g8
+            return False
+        return not self._squares_under_attack(color, [(row, 4), (row, 5), (row, 6)])
+
+    def _can_castle_queenside(self, color: Color) -> bool:
+        row = 7 if color == Color.WHITE else 0
+        king = self.grid[row][4]
+        rook = self.grid[row][0]
+
+        if not rook or rook.type != PieceType.ROOK or rook.color != color or rook.has_moved:
+            return False
+        if self.grid[row][1] or self.grid[row][2] or self.grid[row][3]:  # b1/c1/d1 or b8/c8/d8
+            return False
+        return not self._squares_under_attack(color, [(row, 4), (row, 3), (row, 2)])
+
+    def _squares_under_attack(self, color: Color, squares: list[tuple[int, int]]) -> bool:
+        enemy_color = Color.BLACK if color == Color.WHITE else Color.WHITE
+        enemy_moves = self.generate_pseudo_legal_moves(enemy_color)
+        attacked = set(move.to_pos for move in enemy_moves)
+        return any(square in attacked for square in squares)
