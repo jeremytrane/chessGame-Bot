@@ -1,4 +1,4 @@
-from core.piece import Color
+from core.piece import Color, PieceType
 from core.move import Move
 from core.board import Board
 
@@ -7,6 +7,7 @@ class GameState:
         self.board = board
         self.current_turn = Color.WHITE
         self.move_history = []
+        self.en_passant_target = None  # e.g., (3, 4) after e2e4
 
     def is_game_over(self) -> bool:
         # You can expand this later
@@ -29,11 +30,21 @@ class GameState:
             return None
 
     def make_move(self, move: Move) -> tuple[bool, str]:
+        self.board.en_passant_target = self.en_passant_target
         legal_moves = self.get_all_legal_moves()
         # Since move objects may differ by instance, compare from/to coordinates.
         if not any(self._moves_equal(move, legal_move) for legal_move in legal_moves):
             return False, "Illegal move."
 
+        self.en_passant_target = None
+        if move.piece.type == PieceType.PAWN:
+            r1, _ = move.from_pos
+            r2, _ = move.to_pos
+            if abs(r2 - r1) == 2:
+                row = (r1 + r2) // 2
+                col = move.from_pos[1]
+                self.en_passant_target = (row, col)
+        
         self.board.apply_move(move)
         self.move_history.append(move)
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
