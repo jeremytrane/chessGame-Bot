@@ -52,7 +52,7 @@ Implementation:
 ---
 
 ### ⚖️ PHASE 3 — Rule Enforcement
-- [ ] En passant (timing, legality)
+- [x] En passant (timing, legality)
 - [ ] Castling (rook/king unmoved, check rules)
 - [ ] Pawn promotion (default to queen, later user choice)
 - [ ] Threefold repetition detection
