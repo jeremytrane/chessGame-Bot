@@ -8,10 +8,31 @@ class GameState:
         self.current_turn = Color.WHITE
         self.move_history = []
         self.en_passant_target = None  # e.g., (3, 4) after e2e4
+        self.halfmove_clock = 0
+        self.position_history = {}
 
     def is_game_over(self) -> bool:
-        # You can expand this later
-        return False
+        # 50-move rule
+        if self.halfmove_clock >= 100:
+            print("Draw by 50-move rule.")
+            return True
+
+        # Threefold repetition
+        for pos, count in self.position_history.items():
+            if count >= 3:
+                print("Draw by threefold repetition.")
+                return True
+
+        legal_moves = self.get_all_legal_moves()
+        if legal_moves:
+            return False  # Game continues
+
+        if self.is_in_check(self.current_turn):
+            print(f"Checkmate! {self.current_turn.name} is checkmated.")
+        else:
+            print("Stalemate!")
+
+        return True
 
     def is_valid_input_format(self, move_str: str) -> bool:
         return len(move_str) == 4 and all(c.isalnum() for c in move_str)
@@ -32,12 +53,16 @@ class GameState:
     def make_move(self, move: Move) -> tuple[bool, str]:
         self.board.en_passant_target = self.en_passant_target
         legal_moves = self.get_all_legal_moves()
-        # Since move objects may differ by instance, compare from/to coordinates.
         if not any(self._moves_equal(move, legal_move) for legal_move in legal_moves):
             return False, "Illegal move."
 
         self.en_passant_target = None
+
+        # Reset or increment 50-move clock
         if move.piece.type == PieceType.PAWN:
+            self.halfmove_clock = 0
+
+            # En passant target
             r1, _ = move.from_pos
             r2, _ = move.to_pos
             if abs(r2 - r1) == 2:
@@ -45,12 +70,9 @@ class GameState:
                 col = move.from_pos[1]
                 self.en_passant_target = (row, col)
 
-# Detect and handle promotion even if not flagged in move object
-        if move.piece.type == PieceType.PAWN:
-            to_row = move.to_pos[0]
+            # Detect promotion
             promotion_row = 0 if move.piece.color == Color.WHITE else 7
-
-            if to_row == promotion_row:
+            if r2 == promotion_row:
                 from ui.cli import ask_promotion_choice
                 choice = ask_promotion_choice()
                 move.promotion = {
@@ -60,10 +82,36 @@ class GameState:
                     'n': PieceType.KNIGHT
                 }.get(choice, PieceType.QUEEN)  # Default to queen
 
+        elif move.captured:
+            self.halfmove_clock = 0
+        else:
+            self.halfmove_clock += 1
+
         self.board.apply_move(move)
         self.move_history.append(move)
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
+
+        # Track repetition state
+        key = self._position_key()
+        self.position_history[key] = self.position_history.get(key, 0) + 1
+
         return True, "ok"
+    
+    def _position_key(self) -> str:
+        def piece_repr(piece):
+            if piece is None:
+                return "."
+            symbol = piece.type.name[0]
+            return symbol.upper() if piece.color == Color.WHITE else symbol.lower()
+
+        rows = []
+        for row in self.board.grid:
+            rows.append(''.join(piece_repr(p) for p in row))
+
+        board_str = '/'.join(rows)
+        turn_str = self.current_turn.name
+        ep_str = f"{self.en_passant_target}" if self.en_passant_target else "-"
+        return f"{board_str} {turn_str} {ep_str}"
 
     def _moves_equal(self, m1: Move, m2: Move) -> bool:
         return m1.from_pos == m2.from_pos and m1.to_pos == m2.to_pos
