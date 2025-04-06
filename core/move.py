@@ -12,3 +12,4 @@ class Move:
         fr = f"{chr(self.from_pos[1] + ord('a'))}{8 - self.from_pos[0]}"
         to = f"{chr(self.to_pos[1] + ord('a'))}{8 - self.to_pos[0]}"
         return f"{fr}{to}"
+    
