@@ -122,12 +122,15 @@ class GameState:
     def _moves_equal(self, m1: Move, m2: Move) -> bool:
         return m1.from_pos == m2.from_pos and m1.to_pos == m2.to_pos
 
-    def get_all_legal_moves(self) -> list[Move]:
-        moves = self.board.generate_pseudo_legal_moves(self.current_turn)
+    def get_all_legal_moves(self, color=None) -> list[Move]:
+        if color is None:
+            color = self.current_turn
+
+        moves = self.board.generate_pseudo_legal_moves(color)
         legal_moves = []
         for move in moves:
             self.board.apply_move(move)
-            if not self.is_in_check(self.current_turn):
+            if not self.is_in_check(color):
                 legal_moves.append(move)
             self.board.undo_move(move)
         return legal_moves
