@@ -3,11 +3,10 @@ from core.game_state import GameState
 from ui.cli import display_board, get_user_move_input, show_message
 
 def main():
-    board = Board()
-    game = GameState(board)
+    game = GameState(Board())
 
     while not game.is_game_over():
-        display_board(board)
+        display_board(game.board)
         show_message(f"{game.current_turn.name}'s move")
 
         move_str = get_user_move_input()
@@ -31,7 +30,16 @@ def main():
             continue
 
         if move_str == "export":
-            game.export_pgn()
+            game.export_pgn()  # default filename: game.pgn
+            continue
+
+        if move_str.startswith("load"):
+            parts = move_str.split()
+            if len(parts) == 2:
+                filename = parts[1]
+                game.load_game_from_pgn(filename)
+            else:
+                show_message("Usage: load <filename.pgn>")
             continue
 
         if not game.is_valid_input_format(move_str):
@@ -44,12 +52,11 @@ def main():
             continue
 
         success, result = game.make_move(move)
-
         if not success:
             show_message(f"Illegal move: {result}")
             continue
 
-    display_board(board)
+    display_board(game.board)
     show_message("Game Over.")
 
 if __name__ == "__main__":
