@@ -66,8 +66,8 @@ Implementation:
 - [x] Input parsing (e.g., `e2e4`)
 - [x] Output clean board state
 - [x] Move validation
-- [ ] Undo/redo move stack
-- [ ] Move history
+- [x] Undo/redo move stack
+- [x] Move history
 - [ ] Save/load games (optional PGN format)
 
 ---
