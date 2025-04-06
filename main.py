@@ -30,6 +30,10 @@ def main():
             game.print_move_history()
             continue
 
+        if move_str == "export":
+            game.export_pgn()
+            continue
+
         if not game.is_valid_input_format(move_str):
             show_message("Invalid format. Use e.g. 'e2e4'")
             continue
