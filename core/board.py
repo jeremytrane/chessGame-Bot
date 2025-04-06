@@ -50,11 +50,31 @@ class Board:
     def undo_move(self, move: Move):
         from_row, from_col = move.from_pos
         to_row, to_col = move.to_pos
-        # Move the piece back and restore captured piece
+
+        # Move piece back
         self.grid[from_row][from_col] = move.piece
-        self.grid[to_row][to_col] = move.captured
-        # Reset the piece’s moved flag (for our simple undo)
+        self.grid[to_row][to_col] = None
+
+        # Restore captured piece (normal or en passant)
+        if move.captured:
+            cap_row, cap_col = move.captured_pos
+            self.grid[cap_row][cap_col] = move.captured
+
+        # Reverse rook if castling
+        if move.castling:
+            row = from_row
+            if to_col == 6:  # Kingside
+                self.grid[row][7] = self.grid[row][5]
+                self.grid[row][5] = None
+                self.grid[row][7].has_moved = False
+            elif to_col == 2:  # Queenside
+                self.grid[row][0] = self.grid[row][3]
+                self.grid[row][3] = None
+                self.grid[row][0].has_moved = False
+
+        # Reset piece's moved flag
         move.piece.has_moved = False
+
 
     def generate_pseudo_legal_moves(self, color: Color) -> list[Move]:
         moves = []
@@ -175,10 +195,10 @@ class Board:
         if not piece.has_moved and (row, col) == (7, 4) or (row, col) == (0, 4):
             # Kingside
             if self._can_castle_kingside(piece.color):
-                moves.append(Move(pos, (row, 6), piece))  # e1 → g1 or e8 → g8
+                moves.append(Move(pos, (row, 6), piece, castling=True))  # e1 → g1 or e8 → g8
             # Queenside
             if self._can_castle_queenside(piece.color):
-                moves.append(Move(pos, (row, 2), piece))  # e1 → c1 or e8 → c8
+                moves.append(Move(pos, (row, 2), piece, castling=True))  # e1 → c1 or e8 → c8
         return moves
 
     def find_king(self, color: Color) -> tuple[int, int] | None:
