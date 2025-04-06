@@ -1,3 +1,4 @@
+from core.export import move_to_pgn
 from core.piece import Color, PieceType
 from core.move import Move
 from core.board import Board
@@ -171,3 +172,34 @@ class GameState:
             prefix = f"{move_num}. " if i % 2 == 0 else ""
             print(f"{prefix}{move}", end=' ' if i % 2 == 0 else '\n')
         print()
+
+    def export_pgn(self, filename="game.pgn", white="White", black="Black", result="*"):
+        from datetime import datetime
+
+        lines = [
+            f'[Event "Casual Game"]',
+            f'[Site "Local"]',
+            f'[Date "{datetime.today().strftime("%Y.%m.%d")}"]',
+            f'[Round "1"]',
+            f'[White "{white}"]',
+            f'[Black "{black}"]',
+            f'[Result "{result}"]',
+            ""
+        ]
+
+        # Format moves 1. e4 e5 2. Nf3 Nc6
+        moves = []
+        for i, move in enumerate(self.move_history):
+            san = move_to_pgn(move)
+            if i % 2 == 0:
+                moves.append(f"{(i // 2) + 1}. {san}")
+            else:
+                moves[-1] += f" {san}"
+
+        moves.append(result)
+        lines.append(' '.join(moves))
+
+        with open(filename, 'w') as f:
+            f.write('\n'.join(lines))
+
+        print(f"✅ Game exported to {filename}")
