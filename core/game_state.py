@@ -163,3 +163,11 @@ class GameState:
 
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
         return True
+
+    def print_move_history(self):
+        print("\nMove History:")
+        for i, move in enumerate(self.move_history):
+            move_num = i // 2 + 1
+            prefix = f"{move_num}. " if i % 2 == 0 else ""
+            print(f"{prefix}{move}", end=' ' if i % 2 == 0 else '\n')
+        print()
