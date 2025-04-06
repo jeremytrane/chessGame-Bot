@@ -54,18 +54,18 @@ Implementation:
 ### ⚖️ PHASE 3 — Rule Enforcement
 - [x] En passant (timing, legality)
 - [x] Castling (rook/king unmoved, check rules)
-- [ ] Pawn promotion (default to queen, later user choice)
-- [ ] Threefold repetition detection
-- [ ] 50-move rule
-- [ ] Check/checkmate/stalemate detection
+- [x] Pawn promotion (default to queen, later user choice)
+- [x] Threefold repetition detection
+- [x] 50-move rule
+- [x] Check/checkmate/stalemate detection
 
 ---
 
 ### 🎮 PHASE 4 — Game Management & CLI
-- [ ] Turn system
-- [ ] Input parsing (e.g., `e2e4`)
-- [ ] Output clean board state
-- [ ] Move validation
+- [x] Turn system
+- [x] Input parsing (e.g., `e2e4`)
+- [x] Output clean board state
+- [x] Move validation
 - [ ] Undo/redo move stack
 - [ ] Move history
 - [ ] Save/load games (optional PGN format)
