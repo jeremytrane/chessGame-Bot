@@ -68,7 +68,7 @@ Implementation:
 - [x] Move validation
 - [x] Undo/redo move stack
 - [x] Move history
-- [ ] Save/load games (optional PGN format)
+- [x] Save/load games (optional PGN format)
 
 ---
 
