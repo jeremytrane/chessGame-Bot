@@ -44,7 +44,22 @@ class GameState:
                 row = (r1 + r2) // 2
                 col = move.from_pos[1]
                 self.en_passant_target = (row, col)
-        
+
+# Detect and handle promotion even if not flagged in move object
+        if move.piece.type == PieceType.PAWN:
+            to_row = move.to_pos[0]
+            promotion_row = 0 if move.piece.color == Color.WHITE else 7
+
+            if to_row == promotion_row:
+                from ui.cli import ask_promotion_choice
+                choice = ask_promotion_choice()
+                move.promotion = {
+                    'q': PieceType.QUEEN,
+                    'r': PieceType.ROOK,
+                    'b': PieceType.BISHOP,
+                    'n': PieceType.KNIGHT
+                }.get(choice, PieceType.QUEEN)  # Default to queen
+
         self.board.apply_move(move)
         self.move_history.append(move)
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
