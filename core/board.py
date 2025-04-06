@@ -30,51 +30,50 @@ class Board:
         fr, to = move.from_pos, move.to_pos
         piece = move.piece
 
-        self.grid[to[0]][to[1]] = piece
+        # En Passant
+        if move.captured and self.grid[to[0]][to[1]] is None and move.captured_pos != to:
+            self.grid[move.captured_pos[0]][move.captured_pos[1]] = None
+
+        # Promotion
+        if move.promotion:
+            promoted_piece = Piece(piece.color, move.promotion)
+            promoted_piece.has_moved = True
+            self.grid[to[0]][to[1]] = promoted_piece
+        else:
+            self.grid[to[0]][to[1]] = piece
+
         self.grid[fr[0]][fr[1]] = None
-
-        # 🏰 Handle castling rook movement
-        if piece.type == PieceType.KING and abs(to[1] - fr[1]) == 2:
-            row = fr[0]
-            if to[1] == 6:  # Kingside
-                self.grid[row][5] = self.grid[row][7]
-                self.grid[row][7] = None
-                self.grid[row][5].has_moved = True
-            elif to[1] == 2:  # Queenside
-                self.grid[row][3] = self.grid[row][0]
-                self.grid[row][0] = None
-                self.grid[row][3].has_moved = True
-
         piece.has_moved = True
 
     def undo_move(self, move: Move):
-        from_row, from_col = move.from_pos
-        to_row, to_col = move.to_pos
+        fr, to = move.from_pos, move.to_pos
 
-        # Move piece back
-        self.grid[from_row][from_col] = move.piece
-        self.grid[to_row][to_col] = None
+        # Undo promotion
+        if move.promotion:
+            self.grid[fr[0]][fr[1]] = Piece(move.piece.color, PieceType.PAWN)
+        else:
+            self.grid[fr[0]][fr[1]] = move.piece
+
+        self.grid[to[0]][to[1]] = None
 
         # Restore captured piece (normal or en passant)
         if move.captured:
             cap_row, cap_col = move.captured_pos
             self.grid[cap_row][cap_col] = move.captured
 
-        # Reverse rook if castling
+        # Undo castling (if you added that earlier)
         if move.castling:
-            row = from_row
-            if to_col == 6:  # Kingside
+            row = fr[0]
+            if to[1] == 6:  # Kingside
                 self.grid[row][7] = self.grid[row][5]
                 self.grid[row][5] = None
                 self.grid[row][7].has_moved = False
-            elif to_col == 2:  # Queenside
+            elif to[1] == 2:  # Queenside
                 self.grid[row][0] = self.grid[row][3]
                 self.grid[row][3] = None
                 self.grid[row][0].has_moved = False
 
-        # Reset piece's moved flag
         move.piece.has_moved = False
-
 
     def generate_pseudo_legal_moves(self, color: Color) -> list[Move]:
         moves = []
@@ -109,11 +108,16 @@ class Board:
         row, col = pos
         direction = -1 if piece.color == Color.WHITE else 1
         start_row = 6 if piece.color == Color.WHITE else 1
+        promotion_row = 0 if piece.color == Color.WHITE else 7
 
-        # Standard forward moves
+        # Forward moves
         next_row = row + direction
         if 0 <= next_row < 8 and self.grid[next_row][col] is None:
-            moves.append(Move(pos, (next_row, col), piece))
+            if next_row == promotion_row:
+                for promo_type in [PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT]:
+                    moves.append(Move(pos, (next_row, col), piece, promotion=promo_type))
+            else:
+                moves.append(Move(pos, (next_row, col), piece))
             if row == start_row and self.grid[row + 2 * direction][col] is None:
                 moves.append(Move(pos, (row + 2 * direction, col), piece))
 
@@ -124,9 +128,13 @@ class Board:
             if 0 <= target_col < 8 and 0 <= target_row < 8:
                 target_piece = self.grid[target_row][target_col]
                 if target_piece and target_piece.color != piece.color:
-                    moves.append(Move(pos, (target_row, target_col), piece, captured=target_piece))
+                    if target_row == promotion_row:
+                        for promo_type in [PieceType.QUEEN, PieceType.ROOK, PieceType.BISHOP, PieceType.KNIGHT]:
+                            moves.append(Move(pos, (target_row, target_col), piece, captured=target_piece, promotion=promo_type))
+                    else:
+                        moves.append(Move(pos, (target_row, target_col), piece, captured=target_piece))
 
-        # 🔥 En Passant
+        # En Passant (no change needed from before)
         if en_passant_target:
             ep_row, ep_col = en_passant_target
             if row == (3 if piece.color == Color.WHITE else 4) and abs(col - ep_col) == 1:
@@ -135,9 +143,7 @@ class Board:
                     captured_piece = self.grid[captured_pawn_pos[0]][captured_pawn_pos[1]]
                     if captured_piece and captured_piece.type == PieceType.PAWN and captured_piece.color != piece.color:
                         moves.append(Move(
-                            pos,
-                            (ep_row, ep_col),
-                            piece,
+                            pos, (ep_row, ep_col), piece,
                             captured=captured_piece,
                             captured_pos=captured_pawn_pos
                         ))
