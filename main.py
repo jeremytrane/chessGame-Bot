@@ -19,6 +19,13 @@ def main():
                 show_message("No move to undo.")
             continue
 
+        if move_str == "redo":
+            if game.redo_last_move():
+                show_message("Redid last move.")
+            else:
+                show_message("No move to redo.")
+            continue
+
         if not game.is_valid_input_format(move_str):
             show_message("Invalid format. Use e.g. 'e2e4'")
             continue

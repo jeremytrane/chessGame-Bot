@@ -10,6 +10,8 @@ class GameState:
         self.en_passant_target = None  # e.g., (3, 4) after e2e4
         self.halfmove_clock = 0
         self.position_history = {}
+        self.move_history = []
+        self.redo_stack = []  # 🔁 for redo support
 
     def is_game_over(self) -> bool:
         # 50-move rule
@@ -94,6 +96,7 @@ class GameState:
         # Track repetition state
         key = self._position_key()
         self.position_history[key] = self.position_history.get(key, 0) + 1
+        self.redo_stack.clear()  # Any new move invalidates future redos
 
         return True, "ok"
     
@@ -139,11 +142,24 @@ class GameState:
         row = 8 - int(notation[1])
         return (row, col)
 
-    def undo_last_move(self):
+    def undo_last_move(self) -> bool:
         if not self.move_history:
             return False
 
         last_move = self.move_history.pop()
         self.board.undo_move(last_move)
+        self.redo_stack.append(last_move)  # 🔁 Save for redo
+
+        self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
+        return True
+
+    def redo_last_move(self) -> bool:
+        if not self.redo_stack:
+            return False
+
+        move = self.redo_stack.pop()
+        self.board.apply_move(move)
+        self.move_history.append(move)
+
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
         return True
