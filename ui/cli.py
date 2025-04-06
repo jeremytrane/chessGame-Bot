@@ -13,3 +13,7 @@ def get_user_move_input():
 
 def show_message(msg):
     print(msg)
+
+def ask_promotion_choice():
+    print("Promote to (q = Queen, r = Rook, b = Bishop, n = Knight): ", end='')
+    return input().strip().lower()
