@@ -6,7 +6,7 @@ class Move:
         self.captured = captured
         self.promotion = promotion
         self.captured_pos = captured_pos if captured_pos else to_pos
-        self.castling = castling  # 🔥 new flag
+        self.castling = castling
 
     def __repr__(self):
         fr = f"{chr(self.from_pos[1] + ord('a'))}{8 - self.from_pos[0]}"
