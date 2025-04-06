@@ -1,5 +1,6 @@
 from core.board import Board
 from core.game_state import GameState
+from engine.evaluation import evaluate_board
 from ui.cli import display_board, get_user_move_input, show_message
 
 def main():
@@ -40,6 +41,11 @@ def main():
                 game.load_game_from_pgn(filename)
             else:
                 show_message("Usage: load <filename.pgn>")
+            continue
+
+        if move_str == "eval":
+            score = evaluate_board(game)
+            show_message(f"Eval score: {score}")
             continue
 
         if not game.is_valid_input_format(move_str):
