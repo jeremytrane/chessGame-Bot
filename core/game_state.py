@@ -1,4 +1,5 @@
 from core.export import move_to_pgn
+from core.pgn import load_pgn
 from core.piece import Color, PieceType
 from core.move import Move
 from core.board import Board
@@ -54,6 +55,7 @@ class GameState:
             return None
 
     def make_move(self, move: Move) -> tuple[bool, str]:
+        print(f"🧩 move applied: {move}")
         self.board.en_passant_target = self.en_passant_target
         legal_moves = self.get_all_legal_moves()
         if not any(self._moves_equal(move, legal_move) for legal_move in legal_moves):
@@ -203,3 +205,39 @@ class GameState:
             f.write('\n'.join(lines))
 
         print(f"✅ Game exported to {filename}")
+
+    def play_san_move(self, san: str) -> bool:
+        move = san_to_coords(san, self)
+        if move:
+            self.make_move(move)
+            return True
+        print(f"❌ Could not match PGN move: {san}")
+        return False
+
+    def load_game_from_pgn(self, filename="game.pgn"):
+        print(f"Loading game from {filename}...")
+
+        self.board = Board()
+        self.current_turn = Color.WHITE
+        self.move_history = []
+        self.redo_stack = []
+        self.halfmove_clock = 0
+        self.position_history = {}
+        self.en_passant_target = None
+
+        moves = load_pgn(filename)
+        print(f"PGN Moves: {moves}")
+
+        for san in moves:
+            if not self.play_san_move(san):
+                print(f"⚠️ Failed to apply move: {san}")
+                break
+
+        print("✅ Game loaded and replayed.")
+
+def san_to_coords(san: str, game_state) -> Move | None:
+    legal_moves = game_state.get_all_legal_moves()
+    for move in legal_moves:
+        if move_to_pgn(move) == san:
+            return move
+    return None
