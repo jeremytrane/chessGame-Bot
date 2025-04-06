@@ -73,12 +73,12 @@ Implementation:
 ---
 
 ### 🧠 PHASE 5 — Evaluation Function
-- [ ] Material score
-- [ ] Piece-square tables
-- [ ] Pawn structure (doubled, isolated, passed)
-- [ ] King safety
-- [ ] Mobility
-- [ ] Normalize score per side to move
+- [x] Material score
+- [x] Piece-square tables
+- [x] Pawn structure (doubled, isolated, passed)
+- [x] King safety
+- [x] Mobility
+- [x] Normalize score per side to move
 
 ---
 
