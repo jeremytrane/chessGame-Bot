@@ -5,7 +5,8 @@ class Board:
     def __init__(self):
         self.grid = [[None for _ in range(8)] for _ in range(8)]
         self.setup_position()
-
+        self.en_passant_target = None
+        
     def setup_position(self):
         # Set up pawns
         for col in range(8):
