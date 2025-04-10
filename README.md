@@ -83,8 +83,8 @@ Implementation:
 ---
 
 ### 🤖 PHASE 6 — Bot Logic
-- [ ] Implement Minimax search (recursive)
-- [ ] Add Alpha-Beta pruning
+- [x] Implement Minimax search (recursive)
+- [x] Add Alpha-Beta pruning
 - [ ] Add iterative deepening
 - [ ] Add quiescence search
 - [ ] Add move ordering (captures first, killer moves)
