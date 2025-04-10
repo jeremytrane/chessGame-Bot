@@ -48,6 +48,16 @@ def main():
             show_message(f"Eval score: {score}")
             continue
 
+        if move_str == "bot":
+            from engine.bot import choose_best_move
+            bot_move = choose_best_move(game, depth=3)
+            if bot_move:
+                game.make_move(bot_move)  # only call this ONCE — after the best move is found
+                show_message(f"Bot played: {bot_move}")
+            else:
+                show_message("No legal moves for bot.")
+            continue
+
         if not game.is_valid_input_format(move_str):
             show_message("Invalid format. Use e.g. 'e2e4'")
             continue
