@@ -54,8 +54,9 @@ class GameState:
             print(f"Error parsing move: {e}")
             return None
 
-    def make_move(self, move: Move) -> tuple[bool, str]:
-        print(f"🧩 move applied: {move}")
+    def make_move(self, move: Move, silent=False, record=True) -> tuple[bool, str]:
+        if not silent:
+            print(f"🧩 move applied: {move}")
         self.board.en_passant_target = self.en_passant_target
         legal_moves = self.get_all_legal_moves()
         if not any(self._moves_equal(move, legal_move) for legal_move in legal_moves):
@@ -93,13 +94,13 @@ class GameState:
             self.halfmove_clock += 1
 
         self.board.apply_move(move)
-        self.move_history.append(move)
-        self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
+        if record:
+            self.move_history.append(move)
+            key = self._position_key()
+            self.position_history[key] = self.position_history.get(key, 0) + 1
+            self.redo_stack.clear()  # Any new move invalidates future redos
 
-        # Track repetition state
-        key = self._position_key()
-        self.position_history[key] = self.position_history.get(key, 0) + 1
-        self.redo_stack.clear()  # Any new move invalidates future redos
+        self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
 
         return True, "ok"
     
