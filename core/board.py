@@ -62,18 +62,23 @@ class Board:
             cap_row, cap_col = move.captured_pos
             self.grid[cap_row][cap_col] = move.captured
 
-        # Undo castling (if you added that earlier)
+        # Undo castling
         if move.castling:
             row = fr[0]
             if to[1] == 6:  # Kingside
-                self.grid[row][7] = self.grid[row][5]
-                self.grid[row][5] = None
-                self.grid[row][7].has_moved = False
+                rook = self.grid[row][5]
+                if rook:
+                    self.grid[row][7] = rook
+                    self.grid[row][5] = None
+                    rook.has_moved = False
             elif to[1] == 2:  # Queenside
-                self.grid[row][0] = self.grid[row][3]
-                self.grid[row][3] = None
-                self.grid[row][0].has_moved = False
+                rook = self.grid[row][3]
+                if rook:
+                    self.grid[row][0] = rook
+                    self.grid[row][3] = None
+                    rook.has_moved = False
 
+        # Reset the piece's movement state (except for kingside/queenside rook already handled above)
         move.piece.has_moved = False
 
     def generate_pseudo_legal_moves(self, color: Color) -> list[Move]:
