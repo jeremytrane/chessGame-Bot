@@ -86,7 +86,7 @@ Implementation:
 - [x] Implement Minimax search (recursive)
 - [x] Add Alpha-Beta pruning
 - [ ] Add iterative deepening
-- [ ] Add quiescence search
+- [x] Add quiescence search
 - [ ] Add move ordering (captures first, killer moves)
 - [ ] Time-based or depth-based limits
 
