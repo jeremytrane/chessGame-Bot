@@ -49,13 +49,13 @@ def main():
             continue
 
         if move_str == "bot":
-            from engine.bot import choose_best_move
-            bot_move = choose_best_move(game, depth=3)
+            from engine.bot import choose_best_move_iterative
+            bot_move = choose_best_move_iterative(game, time_limit=1.5)
             if bot_move:
-                game.make_move(bot_move)  # only call this ONCE — after the best move is found
+                game.make_move(bot_move)
                 show_message(f"Bot played: {bot_move}")
             else:
-                show_message("No legal moves for bot.")
+                show_message("Bot found no legal move.")
             continue
 
         if not game.is_valid_input_format(move_str):
