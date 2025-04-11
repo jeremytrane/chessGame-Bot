@@ -1,5 +1,16 @@
-from engine.evaluation import evaluate_board
+from engine.evaluation import PIECE_VALUES, evaluate_board
 from core.piece import Color
+
+def mvv_lva_score(move):
+    if not move.captured:
+        return 0
+    victim_value = PIECE_VALUES.get(move.captured.type, 0)
+    attacker_value = PIECE_VALUES.get(move.piece.type, 1)
+    return victim_value * 10 - attacker_value  
+
+def order_moves(moves):
+    # Captures first, sorted by MVV-LVA
+    return sorted(moves, key=mvv_lva_score, reverse=True)
 
 def is_quiet_position(game_state) -> bool:
     for move in game_state.get_all_legal_moves():
@@ -7,47 +18,13 @@ def is_quiet_position(game_state) -> bool:
             return False
     return True
 
-def quiescence_search(game_state, alpha, beta, maximizing_player):
-    stand_pat = evaluate_board(game_state)
-
-    if maximizing_player:
-        if stand_pat >= beta:
-            return beta
-        alpha = max(alpha, stand_pat)
-    else:
-        if stand_pat <= alpha:
-            return alpha
-        beta = min(beta, stand_pat)
-
-    legal_moves = game_state.get_all_legal_moves()
-    for move in legal_moves:
-        if not move.captured:
-            continue  # Only explore tactical moves
-
-        game_state.board.apply_move(move)
-        score = quiescence_search(game_state, alpha, beta, not maximizing_player)
-        game_state.board.undo_move(move)
-
-        if maximizing_player:
-            if score > alpha:
-                alpha = score
-                if alpha >= beta:
-                    break
-        else:
-            if score < beta:
-                beta = score
-                if beta <= alpha:
-                    break
-
-    return alpha if maximizing_player else beta
-
 def minimax(game_state, depth, alpha, beta, maximizing_player):
     if depth == 0 or game_state.is_game_over():
         quiet_score = quiescence_search(game_state, alpha, beta, maximizing_player)
         return quiet_score, None
 
     best_move = None
-    legal_moves = game_state.get_all_legal_moves()
+    legal_moves = order_moves(game_state.get_all_legal_moves())
     if not legal_moves:
         return evaluate_board(game_state), None
 
@@ -98,7 +75,7 @@ def quiescence_search(game_state, alpha, beta, maximizing_player, depth=4):
             return alpha
         beta = min(beta, stand_pat)
 
-    legal_moves = game_state.get_all_legal_moves()
+    legal_moves = order_moves(game_state.get_all_legal_moves())
     for move in legal_moves:
         if not move.captured:
             continue
