@@ -1,6 +1,8 @@
 from engine.evaluation import PIECE_VALUES, evaluate_board
 from core.piece import Color
 
+KILLER_MOVES = {}
+
 def mvv_lva_score(move):
     if not move.captured:
         return 0
@@ -8,9 +10,16 @@ def mvv_lva_score(move):
     attacker_value = PIECE_VALUES.get(move.piece.type, 1)
     return victim_value * 10 - attacker_value  
 
-def order_moves(moves):
-    # Captures first, sorted by MVV-LVA
-    return sorted(moves, key=mvv_lva_score, reverse=True)
+def order_moves(moves, depth=0):
+    def score(move):
+        if move.captured:
+            return mvv_lva_score(move) + 1000  
+        elif move in KILLER_MOVES.get(depth, []):
+            return 500  
+        return 0  
+
+    return sorted(moves, key=score, reverse=True)
+
 
 def is_quiet_position(game_state) -> bool:
     for move in game_state.get_all_legal_moves():
@@ -41,6 +50,12 @@ def minimax(game_state, depth, alpha, beta, maximizing_player):
 
             alpha = max(alpha, eval)
             if beta <= alpha:
+                if not move.captured:
+                    killers = KILLER_MOVES.setdefault(depth, [])
+                    if move not in killers:
+                        killers.append(move)
+                        if len(killers) > 2:  # limit memory per depth
+                            killers.pop(0)
                 break  # Beta cutoff
         return max_eval, best_move
 
@@ -57,6 +72,12 @@ def minimax(game_state, depth, alpha, beta, maximizing_player):
 
             beta = min(beta, eval)
             if beta <= alpha:
+                if not move.captured:
+                    killers = KILLER_MOVES.setdefault(depth, [])
+                    if move not in killers:
+                        killers.append(move)
+                        if len(killers) > 2:  # limit memory per depth
+                            killers.pop(0)
                 break  # Alpha cutoff
         return min_eval, best_move
     
