@@ -93,15 +93,15 @@ Implementation:
 ---
 
 ### ⚙️ PHASE 7 — Optimization & Testing
-- [ ] Modularize code (board, game, logic, bot)
-- [ ] Profile for performance bottlenecks
-- [ ] Add unit tests for:
-  - [ ] Movement rules
-  - [ ] Special cases
-  - [ ] Game result detection
-- [ ] Add logging/debug mode
-- [ ] Document functions and architecture
-- [ ] Add type hints
+- [x] Modularize code (board, game, logic, bot)
+- [x] Profile for performance bottlenecks
+- [x] Add unit tests for:
+  - [x] Movement rules
+  - [x] Special cases
+  - [x] Game result detection
+- [x] Add logging/debug mode
+- [x] Document functions and architecture
+- [x] Add type hints
 
 ---
 
