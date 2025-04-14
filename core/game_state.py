@@ -251,6 +251,13 @@ class GameState:
 
         print("✅ Game loaded and replayed.")
 
+    def parse_move_coords(self, from_pos, to_pos):
+        legal_moves = self.get_all_legal_moves()
+        for move in legal_moves:
+            if move.from_pos == from_pos and move.to_pos == to_pos:
+                return move
+        return None
+
 def san_to_coords(san: str, game_state) -> Move | None:
     legal_moves = game_state.get_all_legal_moves()
     for move in legal_moves:
