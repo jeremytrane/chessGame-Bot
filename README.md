@@ -87,8 +87,8 @@ Implementation:
 - [x] Add Alpha-Beta pruning
 - [x] Add iterative deepening
 - [x] Add quiescence search
-- [ ] Add move ordering (captures first, killer moves)
-- [ ] Time-based or depth-based limits
+- [x] Add move ordering (captures first, killer moves)
+- [x] Time-based or depth-based limits
 
 ---
 
