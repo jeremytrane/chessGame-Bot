@@ -3,25 +3,41 @@ from core.pgn import load_pgn
 from core.piece import Color, PieceType
 from core.move import Move
 from core.board import Board
+from time import time
 
 class GameState:
     def __init__(self, board: Board):
         self.board = board
         self.current_turn = Color.WHITE
         self.move_history = []
-        self.en_passant_target = None  # e.g., (3, 4) after e2e4
+        self.en_passant_target = None
         self.halfmove_clock = 0
         self.position_history = {}
         self.move_history = []
-        self.redo_stack = []  # 🔁 for redo support
+        self.redo_stack = []
+        self.clocks = {
+            Color.WHITE: 300.0,
+            Color.BLACK: 300.0
+        }
+        self.last_move_time = time()
+
+    def update_clock(self):
+        now = time()
+        elapsed = now - self.last_move_time
+        self.clocks[self.current_turn] -= elapsed
+        self.last_move_time = now
+
+    def get_clock_display(self) -> str:
+        def format_time(seconds):
+            m, s = divmod(int(seconds), 60)
+            return f"{m}:{s:02d}"
+        return f"White: {format_time(self.clocks[Color.WHITE])} | Black: {format_time(self.clocks[Color.BLACK])}"
 
     def is_game_over(self) -> bool:
-        # 50-move rule
         if self.halfmove_clock >= 100:
             print("Draw by 50-move rule.")
             return True
 
-        # Threefold repetition
         for pos, count in self.position_history.items():
             if count >= 3:
                 print("Draw by threefold repetition.")
@@ -29,7 +45,7 @@ class GameState:
 
         legal_moves = self.get_all_legal_moves()
         if legal_moves:
-            return False  # Game continues
+            return False
 
         if self.is_in_check(self.current_turn):
             print(f"Checkmate! {self.current_turn.name} is checkmated.")
@@ -55,8 +71,9 @@ class GameState:
             return None
 
     def make_move(self, move: Move, silent=False, record=True) -> tuple[bool, str]:
+        self.update_clock()
         if not silent:
-            print(f"🧩 move applied: {move}")
+            print(f"\U0001f9e9 move applied: {move}")
         self.board.en_passant_target = self.en_passant_target
         legal_moves = self.get_all_legal_moves()
         if not any(self._moves_equal(move, legal_move) for legal_move in legal_moves):
@@ -64,11 +81,8 @@ class GameState:
 
         self.en_passant_target = None
 
-        # Reset or increment 50-move clock
         if move.piece.type == PieceType.PAWN:
             self.halfmove_clock = 0
-
-            # En passant target
             r1, _ = move.from_pos
             r2, _ = move.to_pos
             if abs(r2 - r1) == 2:
@@ -76,7 +90,6 @@ class GameState:
                 col = move.from_pos[1]
                 self.en_passant_target = (row, col)
 
-            # Detect promotion
             promotion_row = 0 if move.piece.color == Color.WHITE else 7
             if r2 == promotion_row:
                 from ui.cli import ask_promotion_choice
@@ -86,7 +99,7 @@ class GameState:
                     'r': PieceType.ROOK,
                     'b': PieceType.BISHOP,
                     'n': PieceType.KNIGHT
-                }.get(choice, PieceType.QUEEN)  # Default to queen
+                }.get(choice, PieceType.QUEEN)
 
         elif move.captured:
             self.halfmove_clock = 0
@@ -98,12 +111,12 @@ class GameState:
             self.move_history.append(move)
             key = self._position_key()
             self.position_history[key] = self.position_history.get(key, 0) + 1
-            self.redo_stack.clear()  # Any new move invalidates future redos
+            self.redo_stack.clear()
 
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
 
         return True, "ok"
-    
+
     def _position_key(self) -> str:
         def piece_repr(piece):
             if piece is None:
@@ -139,7 +152,7 @@ class GameState:
     def is_in_check(self, color: Color) -> bool:
         king_pos = self.board.find_king(color)
         if king_pos is None:
-            return True  # King missing; treat as check.
+            return True
         enemy_color = Color.BLACK if color == Color.WHITE else Color.WHITE
         enemy_moves = self.board.generate_pseudo_legal_moves(enemy_color)
         return any(move.to_pos == king_pos for move in enemy_moves)
@@ -155,7 +168,7 @@ class GameState:
 
         last_move = self.move_history.pop()
         self.board.undo_move(last_move)
-        self.redo_stack.append(last_move)  # 🔁 Save for redo
+        self.redo_stack.append(last_move)
 
         self.current_turn = Color.BLACK if self.current_turn == Color.WHITE else Color.WHITE
         return True
@@ -193,7 +206,6 @@ class GameState:
             ""
         ]
 
-        # Format moves 1. e4 e5 2. Nf3 Nc6
         moves = []
         for i, move in enumerate(self.move_history):
             san = move_to_pgn(move)
