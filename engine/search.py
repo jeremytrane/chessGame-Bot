@@ -2,6 +2,7 @@ from engine.evaluation import PIECE_VALUES, evaluate_board
 from core.piece import Color
 
 KILLER_MOVES = {}
+TRANSPOSITION_TABLE = {}
 
 def mvv_lva_score(move):
     if not move.captured:
