@@ -18,7 +18,7 @@ IMAGES = {}
 def load_images():
     pieces = ["wP", "wR", "wN", "wB", "wQ", "wK", "bP", "bR", "bN", "bB", "bQ", "bK"]
     for p in pieces:
-        IMAGES[p] = pygame.transform.scale(pygame.image.load(f"assets/{p}.png"), (SQ_SIZE, SQ_SIZE))
+        IMAGES[p] = pygame.transform.scale(pygame.image.load(f"../assets/{p}.png"), (SQ_SIZE, SQ_SIZE))
 
 def piece_to_code(piece):
     color = 'w' if piece.color == Color.WHITE else 'b'
