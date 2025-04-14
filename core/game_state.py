@@ -257,6 +257,34 @@ class GameState:
             if move.from_pos == from_pos and move.to_pos == to_pos:
                 return move
         return None
+    
+    def save_game_to_pgn(self, filename="saved_game.pgn"):
+        from core.pgn import move_to_pgn  
+        import time
+
+        pgn_moves = []
+        temp_state = GameState(Board())  
+        for move in self.move_history:
+            pgn_moves.append(move_to_pgn(move))
+            temp_state.board.apply_move(move)
+            temp_state.current_turn = Color.BLACK if temp_state.current_turn == Color.WHITE else Color.WHITE
+
+        with open(filename, "w") as f:
+            f.write('[Event "Casual Game"]\n')
+            f.write('[Site "Local"]\n')
+            f.write(f'[Date "{time.strftime("%Y.%m.%d")}"]\n')
+            f.write('[Round "1"]\n')
+            f.write('[White "White"]\n')
+            f.write('[Black "Black"]\n')
+            f.write('[Result "*"]\n\n')
+
+            for i in range(0, len(pgn_moves), 2):
+                move_line = f"{(i//2)+1}. {pgn_moves[i]}"
+                if i + 1 < len(pgn_moves):
+                    move_line += f" {pgn_moves[i+1]}"
+                f.write(move_line + " ")
+
+            f.write("\n")
 
 def san_to_coords(san: str, game_state) -> Move | None:
     legal_moves = game_state.get_all_legal_moves()

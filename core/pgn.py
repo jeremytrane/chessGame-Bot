@@ -12,3 +12,10 @@ def load_pgn(filename: str) -> list[str]:
 
     tokens = content.strip().split()
     return [t for t in tokens if not t.endswith('.')]
+
+def move_to_pgn(move):
+    from_row, from_col = move.from_pos
+    to_row, to_col = move.to_pos
+    files = "abcdefgh"
+    ranks = "87654321"
+    return f"{files[from_col]}{ranks[from_row]}{files[to_col]}{ranks[to_row]}"
