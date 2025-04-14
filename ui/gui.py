@@ -11,13 +11,11 @@ from core.game_state import GameState
 from core.piece import Color
 from engine.bot import choose_best_move_iterative
 
-# === CONFIG ===
 WIDTH, HEIGHT = 512, 512
 SQ_SIZE = WIDTH // 8
 HIGHLIGHT_COLOR = (0, 255, 0, 100)
 FPS = 60
 
-# Load piece images
 IMAGES = {}
 def load_images():
     pieces = ["wP", "wR", "wN", "wB", "wQ", "wK", "bP", "bR", "bN", "bB", "bQ", "bK"]
@@ -34,8 +32,6 @@ def draw_board(screen, board, selected_square=None, legal_moves=[]):
         for c in range(8):
             color = colors[(r + c) % 2]
             pygame.draw.rect(screen, color, pygame.Rect(c*SQ_SIZE, r*SQ_SIZE, SQ_SIZE, SQ_SIZE))
-
-    # Highlight selected square and legal moves
     if selected_square:
         s_row, s_col = selected_square
         highlight = pygame.Surface((SQ_SIZE, SQ_SIZE), pygame.SRCALPHA)
@@ -44,8 +40,6 @@ def draw_board(screen, board, selected_square=None, legal_moves=[]):
         for move in legal_moves:
             t_row, t_col = move.to_pos
             screen.blit(highlight, (t_col * SQ_SIZE, t_row * SQ_SIZE))
-
-    # Draw pieces
     for r in range(8):
         for c in range(8):
             piece = board.grid[r][c]
@@ -75,15 +69,31 @@ def animate_move(screen, board, move):
         pygame.display.flip()
         pygame.time.delay(20)
 
+def play_sound(name):
+    try:
+        pygame.mixer.Sound(f"../assets/{name}.wav").play()
+    except Exception as e:
+        print(f"Sound error: {e}")
+
+def save_game(game):
+    game.save_game_to_pgn("saved_game.pgn")
+
+def load_game(game):
+    game.load_game_from_pgn("saved_game.pgn")
+
+def reset_game():
+    return GameState(Board())
+
 def main():
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT + 40))
     pygame.display.set_caption("Chess GUI")
+    pygame.mixer.init()
     clock = pygame.time.Clock()
     load_images()
     font = pygame.font.SysFont("Arial", 20)
 
-    game = GameState(Board())
+    game = reset_game()
     game.clocks = {Color.WHITE: 300.0, Color.BLACK: 300.0}
 
     selected_square = None
@@ -105,6 +115,15 @@ def main():
                     game.undo_last_move()
                     selected_square = None
                     legal_moves_for_selection = []
+                elif event.key == pygame.K_s:
+                    save_game(game)
+                elif event.key == pygame.K_l:
+                    load_game(game)
+                elif event.key == pygame.K_r:
+                    game = reset_game()
+                    game.clocks = {Color.WHITE: 300.0, Color.BLACK: 300.0}
+                    selected_square = None
+                    legal_moves_for_selection = []
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
@@ -124,20 +143,22 @@ def main():
                         start = time.time()
                         success, _ = game.make_move(move)
                         if success:
+                            play_sound("move" if not move.captured else "capture")
                             animate_move(screen, game.board, move)
                             game.clocks[game.current_turn] -= time.time() - start
-                            # Bot move
-                            start = time.time()
+                            if game.is_in_check(game.current_turn):
+                                play_sound("check")
+                            bot_start = time.time()
                             bot_move = choose_best_move_iterative(game, time_limit=1)
                             if bot_move:
                                 game.make_move(bot_move)
+                                play_sound("move" if not bot_move.captured else "capture")
                                 animate_move(screen, game.board, bot_move)
-                                game.clocks[game.current_turn] -= time.time() - start
+                                game.clocks[game.current_turn] -= time.time() - bot_start
                     selected_square = None
                     legal_moves_for_selection = []
 
         clock.tick(FPS)
-
     pygame.quit()
 
 if __name__ == "__main__":
