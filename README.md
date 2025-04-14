@@ -106,11 +106,11 @@ Implementation:
 ---
 
 ### 🎨 PHASE 8 — Optional GUI
-- [ ] Choose GUI library: Pygame / Tkinter / PyQt
-- [ ] Render board and pieces
-- [ ] Handle drag-and-drop or click input
+- [x] Choose GUI library: Pygame / Tkinter / PyQt
+- [x] Render board and pieces
+- [x] Handle drag-and-drop or click input
 - [ ] Show check/mate/stalemate
-- [ ] Play against bot in GUI
+- [x] Play against bot in GUI
 
 ---
 
